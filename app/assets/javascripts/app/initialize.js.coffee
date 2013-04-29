@@ -1,22 +1,30 @@
 @photogur = angular.module('photogur', [])
 
-@photogur.config(($routeProvider, $locationProvider) =>
+@photogur.config(($routeProvider, $locationProvider) ->
+    # Enable HTML5 history support. For browsers that support HTML5 history this means
+    # You can use a url like this
+    #    http://localhost:3000/pictures/new
+    # Instead of this
+    #    http://localhost:3000/#/pictures/new
+    # 
+    # Here's a detailed explanation of how HTML5 history works: 
+    # http://diveintohtml5.info/history.html
+    $locationProvider.html5Mode(true)
 
-  # enable HTML5 history support (so that you can use a url like this
-  # http://localhost:3000/pictures/new
-  # instead of this
-  # http://localhost:3000/#/pictures/new
-
-  $locationProvider.html5Mode(true)
-
-  $routeProvider
-  .when("/", {templateUrl: "pictures/index", controller: "PicturesController"})
-  .when("pictures", {templateUrl: "pictures/index", controller: "PicturesController"})
-  .when("pictures/:id", {templateUrl: "pictures/show", controller: "PicturesController"})
-  .when("pictures/:id/edit", {templateUrl: "pictures/edit", controller: "PictureController"})
-  .when("pictures/new", {templateUrl: "pictures/edit", controller: "PicturesController"})
-  .otherwise({template: "Page not found by Angular."})
+    $routeProvider
+    .when("/",             {templateUrl: "pictures/index", controller: "PicturesController"})
+    .when("/pictures",     {templateUrl: "pictures/index", controller: "PicturesController"})
+    .when("/pictures/new", {templateUrl: "pictures/new", controller: "PicturesController"})
+    .when("/pictures/:id", {templateUrl: "pictures/show", controller: "PictureController"})
+    .when("/pictures/:id/edit", {templateUrl: "pictures/edit", controller: "PictureController"})
+    
+    .otherwise({template: "Page not found by Angular."})
+    
 )
 
-#equivalent of window.photogur.config(function($routeProvider, $locationProvider){
-#});
+@photogur.run(['$window', '$templateCache', ($window, $templateCache) ->
+  # Load the hamlc templates into the angular template cache when angular starts up.
+  # This means angular doesn't need to download each template from the server 
+  # when a page is requested.
+  $templateCache.put(name, templateFunction) for name, templateFunction of $window.JST
+])

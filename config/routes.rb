@@ -1,11 +1,11 @@
 NgPhotogur::Application.routes.draw do
-  
-  root :to => 'static#start'
-  
   namespace :api do
     namespace :v1 do
       resources :pictures
     end
+
+  match "*anything" => "static#start"
+  root :to => 'static#start'
 
 end
   
